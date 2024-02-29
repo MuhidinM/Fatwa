@@ -13,3 +13,10 @@ export interface FooterItem {
   ref: string;
   icon: ReactElement;
 }
+
+export type Payment = {
+  id: string;
+  amount: number;
+  status: "pending" | "processing" | "success" | "failed";
+  email: string;
+};
