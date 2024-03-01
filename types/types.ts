@@ -16,7 +16,6 @@ export interface FooterItem {
 
 export type Payment = {
   id: string;
-  action: ReactElement;
-  category: "pending" | "processing" | "success" | "failed";
+  category: string;
   fatwa: string;
 };
