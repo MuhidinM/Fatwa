@@ -4,7 +4,7 @@ import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Payment } from "@/types/types";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "../ui/data-column-header";
 import { DialogFull } from "../dialog-full";
 
