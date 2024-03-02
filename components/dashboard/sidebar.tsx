@@ -16,24 +16,21 @@ import { ModeToggle } from "../theme-toggle";
 import Logo from "../logo";
 import { User } from "../user";
 import { sideBar } from "@/constants";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { MiniSidebar } from "./mobile-sidebar";
 
-export const Navbar = ({
-  click,
-  menu,
-  small,
-}: {
-  click: any;
-  menu: any;
-  small: any;
-}) => {
+export const Navbar = ({ click, small }: { click: any; small: any }) => {
   const path = usePathname();
   return (
     <div>
       <div className="md:hidden flex items-center justify-between my-2 mx-4">
-        <Button variant={"outline"} onClick={menu}>
-          <span className="sr-only">Open sidebar</span>
-          <AlignJustify />
-        </Button>
+        <Dialog>
+          <DialogTrigger>
+            <span className="sr-only">Open sidebar</span>
+            <AlignJustify />
+          </DialogTrigger>
+          <MiniSidebar />
+        </Dialog>
         <div className="md:hidden">
           <Logo href="/" />
         </div>
