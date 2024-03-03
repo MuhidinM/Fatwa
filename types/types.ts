@@ -14,8 +14,32 @@ export interface FooterItem {
   icon: ReactElement;
 }
 
-export type Payment = {
-  id: string;
-  category: string;
-  fatwa: string;
-};
+export interface Category {
+  name: string;
+  uuid: string;
+}
+
+export interface Teacher {
+  name: string;
+  uuid: string;
+}
+
+export interface User {
+  email: string;
+  photo: string;
+  name: string;
+  uuid: string;
+}
+
+export interface Question {
+  uuid: string;
+  answer: string;
+  answeredBy: Teacher;
+  answeredDate: number;
+  askedBy: User;
+  askedDate: number;
+  category: Category;
+  question: string;
+  references: string[];
+  status: number;
+}

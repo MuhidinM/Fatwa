@@ -8,7 +8,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export function DialogFull({ fatwa, category }: { fatwa: any; category: any }) {
+export function DialogFull({
+  question,
+  category,
+}: {
+  question: any;
+  category: any;
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -20,7 +26,7 @@ export function DialogFull({ fatwa, category }: { fatwa: any; category: any }) {
         <DialogHeader>
           <DialogTitle>{category} Questions</DialogTitle>
         </DialogHeader>
-        {fatwa}
+        {question}
         <DialogFooter>
           <Button type="submit">Accept</Button>
           <Button variant={"destructive"} type="submit">

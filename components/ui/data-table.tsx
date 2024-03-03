@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -50,7 +50,6 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  // console.log((columns[0] as any)['accessorKey']);
 
   const table = useReactTable({
     data,
@@ -70,7 +69,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
-  // console.log(table);
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
