@@ -40,7 +40,7 @@ export const columns: ColumnDef<Question>[] = [
       <div className="flex justify-end">
         <DialogFull
           question={row.getValue("question")}
-          category={row.getValue("category")}
+          // category={row.getValue("category")}
         />
       </div>
     ),
