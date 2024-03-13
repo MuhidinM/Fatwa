@@ -38,10 +38,7 @@ export const columns: ColumnDef<Question>[] = [
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <DialogFull
-          question={row.getValue("question")}
-          // category={row.getValue("category")}
-        />
+        <DialogFull question={row.original.question} uuid={row.original.uuid} />
       </div>
     ),
   },

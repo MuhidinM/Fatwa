@@ -29,7 +29,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, push, update } from "firebase/database";
 import { db } from "@/app/firebase-config";
 import { Category } from "@/types/types";
 
@@ -39,7 +39,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function DialogFull({ question }: { question: any }) {
+export function DialogFull({ question, uuid }: { question: any; uuid: any }) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,7 +47,21 @@ export function DialogFull({ question }: { question: any }) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+    const selectedCategory = data.category; // Assuming 'uuid' is the ID field
+
+    try {
+      // Update the 'status' and 'category' for the specific question
+      const updates: { [key: string]: any } = {};
+      updates[`/questions/${uuid}/status`] = 1;
+      updates[`/questions/${uuid}/category`] = selectedCategory;
+
+      update(ref(db), updates);
+
+      // Additional logic if needed
+      console.log("Data submitted:", data);
+    } catch (error) {
+      console.error("Error updating database:", error);
+    }
   }
 
   useEffect(() => {
