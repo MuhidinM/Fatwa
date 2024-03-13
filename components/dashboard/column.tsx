@@ -35,7 +35,7 @@ export const columns: ColumnDef<Question>[] = [
   },
   {
     accessorKey: "action",
-    header: () => <div className="text-right">Action</div>,
+    header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => (
       <div className="flex justify-end">
         <DialogFull

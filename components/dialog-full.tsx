@@ -15,14 +15,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useEffect, useState } from "react";
 
-import { getDatabase, ref, onValue } from "firebase/database";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { ref, onValue } from "firebase/database";
 import { db } from "@/app/firebase-config";
 import { Category } from "@/types/types";
 
+const FormSchema = z.object({
+  category: z.string({
+    required_error: "Please select a category.",
+  }),
+});
+
 export function DialogFull({ question }: { question: any }) {
   const [categories, setCategories] = useState<Category[]>([]);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log(data);
+  }
 
   useEffect(() => {
     // Define the reference to the 'questions' node in your Firebase database
@@ -56,33 +82,45 @@ export function DialogFull({ question }: { question: any }) {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Question</DialogTitle>
-        </DialogHeader>
-        {question}
-        <div className="flex justify-between items-center mt-8">
-          <div className="font-semibold">Category</div>
-          <Select>
-            <SelectTrigger className="w-[270px]">
-              <SelectValue placeholder="Select a Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.uuid} value={category.name}>
-                  {category.name}
-                </SelectItem>
-              ))}
-              {/* <SelectItem value="light">Light</SelectItem> */}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <DialogFooter>
-          <Button type="submit">Accept</Button>
-          <Button variant={"destructive"} type="submit">
-            Decline
-          </Button>
-        </DialogFooter>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Question</DialogTitle>
+            </DialogHeader>
+            {question}
+            <div className="flex justify-between items-center mt-8">
+              <div className="font-semibold">Category</div>
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormItem>
+                      <FormControl>
+                        <SelectTrigger className="w-[270px]">
+                          <SelectValue placeholder="Select a Category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.uuid} value={category.name}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </FormItem>
+                  </Select>
+                )}
+              />
+            </div>
+            <DialogFooter className="mt-4">
+              <Button type="submit">Accept</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
