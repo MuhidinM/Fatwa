@@ -39,7 +39,13 @@ const FormSchema = z.object({
   }),
 });
 
-export function DialogFull({ question, uuid }: { question: any; uuid: any }) {
+export function DialogFull({
+  question,
+  uuid,
+}: {
+  question: string;
+  uuid: string;
+}) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -58,7 +64,7 @@ export function DialogFull({ question, uuid }: { question: any; uuid: any }) {
       update(ref(db), updates);
 
       // Additional logic if needed
-      console.log("Data submitted:", data);
+      // console.log("Data submitted:", data);
     } catch (error) {
       console.error("Error updating database:", error);
     }
