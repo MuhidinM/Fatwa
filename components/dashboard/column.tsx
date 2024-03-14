@@ -34,21 +34,6 @@ export const columns: ColumnDef<Question>[] = [
     ),
   },
   {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize flex">
-        {row.getValue("status") ? (
-          <div className="flex py-1 px-4 text-white bg-green-700 rounded-full items-center justify-center">Approved</div>
-        ) : (
-          <div className="flex py-1 px-4 text-white bg-destructive rounded-full items-center justify-center">Pending</div>
-        )}
-      </div>
-    ),
-  },
-  {
     accessorKey: "action",
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => (

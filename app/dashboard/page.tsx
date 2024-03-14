@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import { ref, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
@@ -25,7 +25,8 @@ const DashboardHome = () => {
 
         if (data) {
           const questionsArray: Question[] = Object.values(data);
-          const transformedData: Question[] = questionsArray.map((question) => {
+          const filteredData: Question[] = questionsArray.filter(question => question.status === 0);
+          const transformedData: Question[] = filteredData.map((question) => {
             const transformedQuestion: PartialQuestion = {
               uuid: question.uuid,
               answer: question.answer,
