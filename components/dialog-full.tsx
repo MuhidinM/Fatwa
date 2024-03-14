@@ -20,6 +20,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 
@@ -130,6 +131,7 @@ export function DialogFull({
                           </SelectItem>
                         ))}
                       </SelectContent>
+                      <FormMessage />
                     </FormItem>
                   </Select>
                 )}
