@@ -18,11 +18,8 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 
@@ -38,6 +35,8 @@ const FormSchema = z.object({
     required_error: "Please select a category.",
   }),
 });
+
+
 
 export function DialogFull({
   question,

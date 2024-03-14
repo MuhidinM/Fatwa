@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Question } from "@/types/types";
 import { DataTableColumnHeader } from "../ui/data-column-header";
 import { DialogFull } from "../dialog-full";
+import DeleteAlert from "../ui/delete-alert";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -39,6 +40,7 @@ export const columns: ColumnDef<Question>[] = [
     cell: ({ row }) => (
       <div className="flex justify-end">
         <DialogFull question={row.original.question} uuid={row.original.uuid} />
+        <DeleteAlert />
       </div>
     ),
   },
