@@ -17,13 +17,6 @@ export const sideBar: SideBarItem[] = [
     hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
     path: "/dashboard",
   },
-  {
-    name: "dashboard",
-    label: "Dashboard",
-    icon: <LayoutDashboard />,
-    hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
-    path: "/dashboards",
-  },
 ];
 
 export const links: FooterItem[] = [
