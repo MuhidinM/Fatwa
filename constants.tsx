@@ -17,6 +17,27 @@ export const sideBar: SideBarItem[] = [
     hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
     path: "/dashboard",
   },
+  {
+    name: "Users",
+    label: "Users",
+    icon: <LayoutDashboard />,
+    hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
+    path: "/Users",
+  },
+  {
+    name: "Ustazs",
+    label: "Ustazs",
+    icon: <LayoutDashboard />,
+    hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
+    path: "/Ustazs",
+  },
+  {
+    name: "Categories",
+    label: "Categories",
+    icon: <LayoutDashboard />,
+    hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
+    path: "/Categories",
+  },
 ];
 
 export const links: FooterItem[] = [
