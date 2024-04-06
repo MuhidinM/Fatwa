@@ -1,10 +1,14 @@
 import {
   Facebook,
+  FileQuestion,
   Github,
   Globe,
+  GraduationCap,
   Instagram,
+  Layers3,
   LayoutDashboard,
   Twitter,
+  User,
 } from "lucide-react";
 import { FooterItem, SideBarItem } from "./types/types";
 
@@ -18,25 +22,32 @@ export const sideBar: SideBarItem[] = [
     path: "/dashboard",
   },
   {
+    name: "questions",
+    label: "Questions",
+    icon: <FileQuestion />,
+    hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
+    path: "/dashboard/questions",
+  },
+  {
     name: "users",
     label: "Users",
-    icon: <LayoutDashboard />,
+    icon: <User />,
     hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
-    path: "/users",
+    path: "/dashboard/users",
   },
   {
     name: "ustazs",
     label: "Ustazs",
-    icon: <LayoutDashboard />,
+    icon: <GraduationCap />,
     hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
-    path: "/ustazs",
+    path: "/dashboard/ustazs",
   },
   {
     name: "categories",
     label: "Categories",
-    icon: <LayoutDashboard />,
+    icon: <Layers3 />,
     hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
-    path: "/categories",
+    path: "/dashboard/categories",
   },
 ];
 
