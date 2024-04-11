@@ -22,7 +22,7 @@ const QuestionsHome = () => {
       questionsRef,
       (snapshot) => {
         const data = snapshot.val();
-
+        console.log(data);
         if (data) {
           const questionsArray: Question[] = Object.values(data);
           const filteredData: Question[] = questionsArray.filter(
@@ -53,7 +53,7 @@ const QuestionsHome = () => {
       }
     );
   }, []);
-  // console.log(questions);
+  console.log(questions);
 
   return (
     <div className="md:container mx-auto py-10">

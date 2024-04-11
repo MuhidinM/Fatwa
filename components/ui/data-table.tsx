@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/table";
 import { DataTablePagination } from "./data-table-pagination";
 import { Search } from "./search";
-import AddCategory from "../dashboard/add-category";
+import AddCategory from "../categories/add-category";
+import { usePathname } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -70,13 +71,15 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+  const pathname = usePathname();
 
+  // console.log(pathname);
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Search table={table} columns={columns} />
         <div className="flex space-x-4 ml-auto">
-          <AddCategory />
+          {pathname === "/dashboard/categories" && <AddCategory />}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="">
