@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { push, ref } from "firebase/database";
+import { push, ref, set } from "firebase/database";
 import { db } from "@/app/firebase-config";
 
 const formSchema = z.object({
@@ -32,20 +32,31 @@ const AddCategory = () => {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      // Add new category
+      // Add new category and capture the reference
       const categoriesRef = ref(db, "categories");
-      push(categoriesRef, {
+      const newCategoryRef = push(categoriesRef, {
         name: data.category,
       });
+  
+      // Get the generated key (UUID) from the reference
+      const uuid = newCategoryRef.key;
+  
+      // Update the category with the generated UUID directly under the category key
+      if (uuid) {
+        const categoryData = {
+          uuid: uuid,
+          name: data.category,
+        };
+        set(ref(db, `categories/${uuid}`), categoryData);
+      }
+  
       form.reset();
-      // Additional logic if needed
-      // console.log("Data submitted:", data);
     } catch (error) {
       console.error("Error updating database:", error);
     }
-
-    // console.log(data.category);
   }
+  
+  
 
   return (
     <Form {...form}>
