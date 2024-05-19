@@ -13,10 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { ref, remove } from "firebase/database";
 
-const DeleteAlert = ({ uuid }: { uuid: string }) => {
-  console.log(uuid);
+const DeleteAlert = ({ uuid, type }: { uuid: string; type: string }) => {
+  // console.log(uuid);
   const handleDelete = () => {
-    const questionRef = ref(db, "questions/" + uuid); // Create a reference to the specific question
+    const questionRef = ref(db, `${type}/` + uuid);
 
     remove(questionRef) // Remove the specific question
       .then(() => {
@@ -39,7 +39,7 @@ const DeleteAlert = ({ uuid }: { uuid: string }) => {
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently{" "}
-            <span className="text-destructive">delete</span> this question.
+            <span className="text-destructive">Remove</span> it.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

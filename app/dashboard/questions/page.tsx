@@ -53,7 +53,7 @@ const QuestionsHome = () => {
       }
     );
   }, []);
-  console.log(questions);
+  // console.log(questions);
 
   return (
     <div className="md:container mx-auto py-10">

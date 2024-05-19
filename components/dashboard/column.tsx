@@ -40,7 +40,7 @@ export const columns: ColumnDef<Question>[] = [
     cell: ({ row }) => (
       <div className="flex justify-end">
         <DialogFull question={row.original.question} uuid={row.original.uuid} />
-        <DeleteAlert uuid={row.original.uuid} />
+        <DeleteAlert uuid={row.original.uuid} type="questions" />
       </div>
     ),
   },

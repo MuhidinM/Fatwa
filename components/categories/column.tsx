@@ -25,14 +25,11 @@ export const columns: ColumnDef<Category>[] = [
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <Button variant="link" className="">
-          Edit
-        </Button>
-        <Button variant="link" className="text-destructive">
+        {/* <Button variant="link" className="text-destructive">
           Delete
-        </Button>
+        </Button> */}
         {/* <DialogFull question={row.original.question} uuid={row.original.uuid} /> */}
-        {/* <DeleteAlert uuid={row.original.uuid} /> */}
+        <DeleteAlert uuid={row.original.uuid} type={"categories"} />
       </div>
     ),
   },
