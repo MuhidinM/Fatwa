@@ -35,6 +35,7 @@ import { DataTablePagination } from "./data-table-pagination";
 import { Search } from "./search";
 import AddCategory from "../categories/add-category";
 import { usePathname } from "next/navigation";
+import AddUstaz from "../ustazs/add-new";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -80,6 +81,7 @@ export function DataTable<TData, TValue>({
         <Search table={table} columns={columns} />
         <div className="flex space-x-4 ml-auto">
           {pathname === "/dashboard/categories" && <AddCategory />}
+          {pathname === "/dashboard/ustazs" && <AddUstaz />}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="">

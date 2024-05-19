@@ -5,9 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Category } from "@/types/types";
 import { DataTableColumnHeader } from "../ui/data-column-header";
-import { DialogFull } from "../dialog-full";
-import DeleteAlert from "../ui/delete-alert";
-import { Button } from "../ui/button";
+import Suspend from "../suspend";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -25,14 +23,7 @@ export const columns: ColumnDef<Category>[] = [
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <Button variant="link" className="">
-          Suspend
-        </Button>
-        <Button variant="link" className="text-destructive">
-          Delete
-        </Button>
-        {/* <DialogFull question={row.original.question} uuid={row.original.uuid} /> */}
-        {/* <DeleteAlert uuid={row.original.uuid} /> */}
+        <Suspend uuid={row.original.uuid} type="ustazs" />
       </div>
     ),
   },

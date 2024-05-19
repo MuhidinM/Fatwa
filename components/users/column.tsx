@@ -9,6 +9,7 @@ import { DialogFull } from "../dialog-full";
 import DeleteAlert from "../ui/delete-alert";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Suspend from "../suspend";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -50,15 +51,9 @@ export const columns: ColumnDef<Category>[] = [
     accessorKey: "action",
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => (
+      // console.log(row.original),
       <div className="flex justify-end">
-        <Button variant="link" className="">
-          Suspend
-        </Button>
-        <Button variant="link" className="text-destructive">
-          Delete
-        </Button>
-        {/* <DialogFull question={row.original.question} uuid={row.original.uuid} /> */}
-        {/* <DeleteAlert uuid={row.original.uuid} /> */}
+        <Suspend uuid={row.original.uuid} type="Users" />
       </div>
     ),
   },
