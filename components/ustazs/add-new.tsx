@@ -3,7 +3,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,13 +21,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { push, ref, set } from "firebase/database";
+import { ref, set } from "firebase/database";
 import { db } from "@/app/firebase-config";
 
 const formSchema = z.object({
-  category: z.string().min(2, {
-    message: "category must be at least 2 characters.",
+  name: z.string().min(3, {
+    message: "Name must be at least 3 characters.",
+  }),
+  phone: z.string().min(10, {
+    message: "phone number must be at least 10 characters.",
   }),
 });
 
@@ -27,68 +37,75 @@ const AddUstaz = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      category: "",
+      name: "",
     },
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      // Add new category and capture the reference
-      const categoriesRef = ref(db, "categories");
-      const newCategoryRef = push(categoriesRef, {
-        name: data.category,
+      // Use phone number as the ID
+      const ustazRef = ref(db, `ustazs/${data.phone}`);
+
+      // Set the data
+      set(ustazRef, {
+        name: data.name,
+        phone: data.phone,
+        status: 0,
+        image: "",
+        lastSeen: "",
+        token: "",
+        uuid: data.phone,
       });
-
-      // Get the generated key (UUID) from the reference
-      const uuid = newCategoryRef.key;
-
-      // Update the category with the generated UUID directly under the category key
-      if (uuid) {
-        const categoryData = {
-          uuid: uuid,
-          name: data.category,
-        };
-        set(ref(db, `categories/${uuid}`), categoryData);
-      }
 
       form.reset();
     } catch (error) {
       console.error("Error updating database:", error);
     }
   }
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-x-2">
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Muhammad Ahmed" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone No</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="00251912345678" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Add</Button>
-      </form>
-    </Form>
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>Add Ustaz</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="grid space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Sheik Muhammad Ahmed" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone No</FormLabel>
+                    <FormControl>
+                      <Input placeholder="+251912345678" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Add</Button>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

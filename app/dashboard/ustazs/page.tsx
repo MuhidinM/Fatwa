@@ -25,7 +25,7 @@ const UstazsHome = () => {
       }
     });
   }, []);
-
+  console.log(teacher);
   return (
     <div className="md:container mx-auto py-10">
       <DataTable columns={columns} data={teacher} />
