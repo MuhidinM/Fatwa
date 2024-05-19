@@ -1,4 +1,5 @@
 import {
+  Bolt,
   Facebook,
   FileQuestion,
   Github,
@@ -48,6 +49,13 @@ export const sideBar: SideBarItem[] = [
     icon: <Layers3 />,
     hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
     path: "/dashboard/categories",
+  },
+  {
+    name: "config",
+    label: "Config",
+    icon: <Bolt />,
+    hide: false, // set the hidden value to true if you want to. U can use different var for different purposes.
+    path: "/dashboard/config",
   },
 ];
 
