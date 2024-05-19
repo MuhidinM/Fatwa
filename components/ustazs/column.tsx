@@ -3,20 +3,27 @@
 import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Category } from "@/types/types";
+import { Teacher } from "@/types/types";
 import { DataTableColumnHeader } from "../ui/data-column-header";
 import Suspend from "../suspend";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<Teacher>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ustazs" />
     ),
     cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Phone" />
+    ),
+    cell: ({ row }) => <div className="capitalize">{row.original.uuid}</div>,
   },
   {
     accessorKey: "action",

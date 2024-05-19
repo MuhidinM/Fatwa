@@ -26,7 +26,7 @@ export interface Teacher {
 
 export interface User {
   email: string;
-  photo: string;
+  phone: string;
   name: string;
   uuid: string;
 }

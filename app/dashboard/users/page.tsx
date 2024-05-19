@@ -19,7 +19,7 @@ const UsersHome = () => {
         const transformedUsers: User[] = filteredData.map((users) => ({
           uuid: users.uuid,
           name: users.name,
-          photo: users.photo,
+          phone: users.phone,
           email: users.email,
           // Add any other transformations you need here
         }));

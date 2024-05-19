@@ -2,19 +2,15 @@
 
 import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
-
-import { Category } from "@/types/types";
+import { User } from "@/types/types";
 import { DataTableColumnHeader } from "../ui/data-column-header";
-import { DialogFull } from "../dialog-full";
-import DeleteAlert from "../ui/delete-alert";
-import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Suspend from "../suspend";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -41,11 +37,9 @@ export const columns: ColumnDef<Category>[] = [
   {
     accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+      <DataTableColumnHeader column={column} title="Phone" />
     ),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("email")}</div>
-    ),
+    cell: ({ row }) => <div className="capitalize">{row.original.phone}</div>,
   },
   {
     accessorKey: "action",
@@ -53,7 +47,7 @@ export const columns: ColumnDef<Category>[] = [
     cell: ({ row }) => (
       // console.log(row.original),
       <div className="flex justify-end">
-        <Suspend uuid={row.original.uuid} type="Users" />
+        <Suspend uuid={row.original.phone} type="Users" />
       </div>
     ),
   },
