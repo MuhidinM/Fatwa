@@ -31,6 +31,7 @@ import { ref, onValue, push, update } from "firebase/database";
 import { db } from "@/app/firebase-config";
 import { Category } from "@/types/types";
 import { useToast } from "./ui/use-toast";
+import DeleteAlert from "./ui/delete-alert";
 
 const FormSchema = z.object({
   category: z.string({
@@ -65,10 +66,12 @@ export function DialogFull({
 
         // Additional logic if needed
         // console.log("Data submitted:", data);
+        form.reset();
         toast({
           title: "Updated Successfully.",
         });
       } catch (error) {
+        form.reset();
         toast({
           title: "Error updating.",
         });
@@ -148,6 +151,7 @@ export function DialogFull({
               />
             </div>
             <DialogFooter className="mt-4">
+              <DeleteAlert uuid={uuid} type="questions" />
               <Button type="submit" disabled={isPending}>
                 Accept
               </Button>
