@@ -22,7 +22,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,14 +30,13 @@ import { useForm } from "react-hook-form";
 import { ref, onValue, push, update } from "firebase/database";
 import { db } from "@/app/firebase-config";
 import { Category } from "@/types/types";
+import { useToast } from "./ui/use-toast";
 
 const FormSchema = z.object({
   category: z.string({
     required_error: "Please select a category.",
   }),
 });
-
-
 
 export function DialogFull({
   question,
@@ -47,50 +46,60 @@ export function DialogFull({
   uuid: string;
 }) {
   const [categories, setCategories] = useState<Category[]>([]);
-
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const selectedCategory = data.category; // Assuming 'uuid' is the ID field
+    startTransition(() => {
+      try {
+        // Update the 'status' and 'category' for the specific question
+        const updates: { [key: string]: any } = {};
+        updates[`/questions/${uuid}/status`] = 1;
+        updates[`/questions/${uuid}/category`] = selectedCategory;
 
-    try {
-      // Update the 'status' and 'category' for the specific question
-      const updates: { [key: string]: any } = {};
-      updates[`/questions/${uuid}/status`] = 1;
-      updates[`/questions/${uuid}/category`] = selectedCategory;
+        update(ref(db), updates);
 
-      update(ref(db), updates);
-
-      // Additional logic if needed
-      // console.log("Data submitted:", data);
-    } catch (error) {
-      console.error("Error updating database:", error);
-    }
+        // Additional logic if needed
+        // console.log("Data submitted:", data);
+        toast({
+          title: "Updated Successfully.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error updating.",
+        });
+        console.error("Error updating database:", error);
+      }
+    });
   }
 
   useEffect(() => {
-    // Define the reference to the 'questions' node in your Firebase database
-    const categoriesRef = ref(db, "categories");
+    startTransition(() => {
+      // Define the reference to the 'questions' node in your Firebase database
+      const categoriesRef = ref(db, "categories");
 
-    // Set up the event listener for changes in the 'questions' node
-    onValue(
-      categoriesRef,
-      (snapshot) => {
-        const data = snapshot.val();
+      // Set up the event listener for changes in the 'questions' node
+      onValue(
+        categoriesRef,
+        (snapshot) => {
+          const data = snapshot.val();
 
-        // Check if there is data and update the state
-        if (data) {
-          const questionsArray: Category[] = Object.values(data);
-          setCategories(questionsArray);
+          // Check if there is data and update the state
+          if (data) {
+            const questionsArray: Category[] = Object.values(data);
+            setCategories(questionsArray);
+          }
+        },
+        {
+          // Optionally, you can handle errors here
+          onlyOnce: false, // Set this to true if you only want to fetch data once
         }
-      },
-      {
-        // Optionally, you can handle errors here
-        onlyOnce: false, // Set this to true if you only want to fetch data once
-      }
-    );
+      );
+    });
   }, []);
 
   // console.log(categories);
@@ -101,7 +110,7 @@ export function DialogFull({
           View
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[625px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
@@ -116,11 +125,12 @@ export function DialogFull({
                 render={({ field }) => (
                   <Select
                     onValueChange={field.onChange}
+                    disabled={isPending}
                     defaultValue={field.value}
                   >
                     <FormItem>
                       <FormControl>
-                        <SelectTrigger className="w-[270px]">
+                        <SelectTrigger className="w-[370px]">
                           <SelectValue placeholder="Select a Category" />
                         </SelectTrigger>
                       </FormControl>
@@ -138,7 +148,9 @@ export function DialogFull({
               />
             </div>
             <DialogFooter className="mt-4">
-              <Button type="submit">Accept</Button>
+              <Button type="submit" disabled={isPending}>
+                Accept
+              </Button>
             </DialogFooter>
           </form>
         </Form>
