@@ -23,6 +23,8 @@ import {
 import { Input } from "../ui/input";
 import { ref, set } from "firebase/database";
 import { db } from "@/app/firebase-config";
+import { useTransition } from "react";
+import { useToast } from "../ui/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -34,6 +36,8 @@ const formSchema = z.object({
 });
 
 const AddUstaz = () => {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,25 +46,35 @@ const AddUstaz = () => {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    try {
-      // Use phone number as the ID
-      const ustazRef = ref(db, `ustazs/${data.phone}`);
+    startTransition(() => {
+      try {
+        // Use phone number as the ID
+        const ustazRef = ref(db, `ustazs/${data.phone}`);
 
-      // Set the data
-      set(ustazRef, {
-        name: data.name,
-        phone: data.phone,
-        status: 0,
-        image: "",
-        lastSeen: "",
-        token: "",
-        uuid: data.phone,
-      });
+        // Set the data
+        set(ustazRef, {
+          name: data.name,
+          phone: data.phone,
+          status: 0,
+          image: "",
+          lastSeen: "",
+          token: "",
+          uuid: data.phone,
+        });
 
-      form.reset();
-    } catch (error) {
-      console.error("Error updating database:", error);
-    }
+        form.reset();
+        toast({
+          title: "Created a ustaz Successfully",
+          description: "Ustaz Name: " + data.name,
+        });
+      } catch (error) {
+        form.reset();
+        toast({
+          title: "Failed to create ustaz",
+        });
+        console.error("Error updating database:", error);
+      }
+    });
   }
   return (
     <>
@@ -81,7 +95,11 @@ const AddUstaz = () => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Sheik Muhammad Ahmed" {...field} />
+                      <Input
+                        placeholder="Sheik Muhammad Ahmed"
+                        {...field}
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -94,13 +112,19 @@ const AddUstaz = () => {
                   <FormItem>
                     <FormLabel>Phone No</FormLabel>
                     <FormControl>
-                      <Input placeholder="+251912345678" {...field} />
+                      <Input
+                        placeholder="+251912345678"
+                        {...field}
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit">Add</Button>
+              <Button type="submit" disabled={isPending}>
+                Add
+              </Button>
             </form>
           </Form>
         </DialogContent>
