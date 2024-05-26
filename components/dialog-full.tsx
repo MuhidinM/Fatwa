@@ -29,11 +29,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ref, onValue, push, update } from "firebase/database";
 import { db } from "@/app/firebase-config";
-import { Category } from "@/types/types";
+import { Category, Teacher } from "@/types/types";
 import { useToast } from "./ui/use-toast";
 import DeleteAlert from "./ui/delete-alert";
 
 const FormSchema = z.object({
+  ustaz: z.string({
+    required_error: "Please select a ustaz.",
+  }),
   category: z.string({
     required_error: "Please select a category.",
   }),
@@ -47,6 +50,7 @@ export function DialogFull({
   uuid: string;
 }) {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [ustazs, setUstazs] = useState<Teacher[]>([]);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -54,18 +58,28 @@ export function DialogFull({
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    const selectedCategory = data.category; // Assuming 'uuid' is the ID field
+    const selectedCategory = data.category;
+    const selectedUstaz = ustazs.find((ustaz) => ustaz.uuid === data.ustaz);
+
+    if (!selectedUstaz) {
+      toast({
+        title: "Error",
+        description: "Selected ustaz not found.",
+      });
+      return;
+    }
+
     startTransition(() => {
       try {
-        // Update the 'status' and 'category' for the specific question
+        // Update the 'status', 'category', and 'answeredBy' for the specific question
         const updates: { [key: string]: any } = {};
         updates[`/questions/${uuid}/status`] = 1;
         updates[`/questions/${uuid}/category`] = selectedCategory;
+        updates[`/questions/${uuid}/answeredBy/uuid`] = selectedUstaz.uuid;
+        updates[`/questions/${uuid}/answeredBy/name`] = selectedUstaz.name;
 
         update(ref(db), updates);
 
-        // Additional logic if needed
-        // console.log("Data submitted:", data);
         form.reset();
         toast({
           title: "Updated Successfully.",
@@ -82,30 +96,46 @@ export function DialogFull({
 
   useEffect(() => {
     startTransition(() => {
-      // Define the reference to the 'questions' node in your Firebase database
+      // Define references to 'categories' and 'ustazs' nodes in your Firebase database
       const categoriesRef = ref(db, "categories");
+      const ustazsRef = ref(db, "ustazs");
 
-      // Set up the event listener for changes in the 'questions' node
+      // Set up the event listener for changes in the 'categories' node
       onValue(
         categoriesRef,
         (snapshot) => {
           const data = snapshot.val();
 
-          // Check if there is data and update the state
+          // Check if there is data and update the state for categories
           if (data) {
-            const questionsArray: Category[] = Object.values(data);
-            setCategories(questionsArray);
+            const categoriesArray: Category[] = Object.values(data);
+            setCategories(categoriesArray);
           }
         },
         {
-          // Optionally, you can handle errors here
-          onlyOnce: false, // Set this to true if you only want to fetch data once
+          onlyOnce: false,
+        }
+      );
+
+      // Set up the event listener for changes in the 'ustazs' node
+      onValue(
+        ustazsRef,
+        (snapshot) => {
+          const data = snapshot.val();
+
+          // Check if there is data and update the state for ustazs
+          if (data) {
+            const ustazsArray: Teacher[] = Object.values(data);
+            setUstazs(ustazsArray);
+          }
+        },
+        {
+          onlyOnce: false,
         }
       );
     });
   }, []);
 
-  // console.log(categories);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -121,6 +151,36 @@ export function DialogFull({
             </DialogHeader>
             {question}
             <div className="flex justify-between items-center mt-8">
+              <div className="font-semibold">Ustaz</div>
+              <FormField
+                control={form.control}
+                name="ustaz"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    disabled={isPending}
+                    defaultValue={field.value}
+                  >
+                    <FormItem>
+                      <FormControl>
+                        <SelectTrigger className="w-[370px]">
+                          <SelectValue placeholder="Select a Ustaz" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {ustazs.map((ustaz) => (
+                          <SelectItem key={ustaz.uuid} value={ustaz.uuid}>
+                            {ustaz.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                      <FormMessage />
+                    </FormItem>
+                  </Select>
+                )}
+              />
+            </div>
+            <div className="flex justify-between items-center mt-4">
               <div className="font-semibold">Category</div>
               <FormField
                 control={form.control}
