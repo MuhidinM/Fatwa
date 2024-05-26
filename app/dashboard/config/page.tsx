@@ -87,7 +87,10 @@ const Config = () => {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid grid-cols-2 gap-4"
+        >
           <FormField
             control={form.control}
             name="showAd"
@@ -166,22 +169,27 @@ const Config = () => {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="version"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Version</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} disabled={isPending} />
-                </FormControl>
-                <FormDescription>sample description</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit" disabled={isPending}>
+          <div className="col-span-2">
+            <FormField
+              control={form.control}
+              name="version"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Version</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} disabled={isPending} />
+                  </FormControl>
+                  <FormDescription>sample description</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="col-span-2 max-w-[80px]"
+          >
             Submit
           </Button>
         </form>
