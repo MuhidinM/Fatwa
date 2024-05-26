@@ -63,7 +63,6 @@ const AddCategory = () => {
       } catch (error) {
         form.reset();
         toast({
-          variant: "destructive",
           title: "Could not create category",
           description: "Category Title: " + data.category,
         });

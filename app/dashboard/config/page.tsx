@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   showAd: z.boolean(),
@@ -31,6 +32,8 @@ const formSchema = z.object({
 });
 
 const Config = () => {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,14 +66,22 @@ const Config = () => {
   }, [form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const configRef = ref(db, "config");
-      await set(configRef, values);
-      form.reset(values);
-      console.log("Data successfully updated");
-    } catch (error) {
-      console.error("Error updating data:", error);
-    }
+    startTransition(async () => {
+      try {
+        const configRef = ref(db, "config");
+        await set(configRef, values);
+        form.reset(values);
+        toast({
+          title: "Config successfully updated",
+        });
+        console.log("config successfully updated");
+      } catch (error) {
+        toast({
+          title: "Error updating config",
+        });
+        console.error("Error updating config:", error);
+      }
+    });
   };
 
   return (
@@ -89,6 +100,7 @@ const Config = () => {
                 <FormControl>
                   <Switch
                     checked={field.value}
+                    disabled={isPending}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
@@ -109,6 +121,7 @@ const Config = () => {
                 <FormControl>
                   <Switch
                     checked={field.value}
+                    disabled={isPending}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
@@ -127,6 +140,7 @@ const Config = () => {
                 <FormControl>
                   <Switch
                     checked={field.value}
+                    disabled={isPending}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
@@ -145,6 +159,7 @@ const Config = () => {
                 <FormControl>
                   <Switch
                     checked={field.value}
+                    disabled={isPending}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
@@ -159,14 +174,16 @@ const Config = () => {
               <FormItem>
                 <FormLabel>Version</FormLabel>
                 <FormControl>
-                  <Input placeholder="" {...field} />
+                  <Input placeholder="" {...field} disabled={isPending} />
                 </FormControl>
                 <FormDescription>sample description</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isPending}>
+            Submit
+          </Button>
         </form>
       </Form>
     </div>
