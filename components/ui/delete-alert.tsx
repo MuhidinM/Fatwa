@@ -12,25 +12,40 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ref, remove } from "firebase/database";
+import { useTransition } from "react";
+import { useToast } from "./use-toast";
 
 const DeleteAlert = ({ uuid, type }: { uuid: string; type: string }) => {
-  // console.log(uuid);
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const handleDelete = () => {
-    const questionRef = ref(db, `${type}/` + uuid);
+    startTransition(() => {
+      const questionRef = ref(db, `${type}/` + uuid);
 
-    remove(questionRef) // Remove the specific question
-      .then(() => {
-        console.log("Question deleted successfully:", uuid);
-      })
-      .catch((error) => {
-        console.error("Error deleting question:", error);
-      });
+      remove(questionRef) // Remove the specific question
+        .then(() => {
+          toast({
+            title: "Deleted successfully",
+          });
+          console.log("Deleted successfully:", uuid);
+        })
+        .catch((error) => {
+          toast({
+            title: "Error deleting",
+          });
+          console.error("Error deleting:", error);
+        });
+    });
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="link" className="text-destructive">
+        <Button
+          disabled={isPending}
+          variant="link"
+          className="text-destructive"
+        >
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -44,7 +59,9 @@ const DeleteAlert = ({ uuid, type }: { uuid: string; type: string }) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+          <AlertDialogAction disabled={isPending} onClick={handleDelete}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

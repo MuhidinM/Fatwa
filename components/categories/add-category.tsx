@@ -15,6 +15,8 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { push, ref, set } from "firebase/database";
 import { db } from "@/app/firebase-config";
+import { useTransition } from "react";
+import { useToast } from "../ui/use-toast";
 
 const formSchema = z.object({
   category: z.string().min(2, {
@@ -23,6 +25,8 @@ const formSchema = z.object({
 });
 
 const AddCategory = () => {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,32 +35,41 @@ const AddCategory = () => {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    try {
-      // Add new category and capture the reference
-      const categoriesRef = ref(db, "categories");
-      const newCategoryRef = push(categoriesRef, {
-        name: data.category,
-      });
-  
-      // Get the generated key (UUID) from the reference
-      const uuid = newCategoryRef.key;
-  
-      // Update the category with the generated UUID directly under the category key
-      if (uuid) {
-        const categoryData = {
-          uuid: uuid,
+    startTransition(() => {
+      try {
+        // Add new category and capture the reference
+        const categoriesRef = ref(db, "categories");
+        const newCategoryRef = push(categoriesRef, {
           name: data.category,
-        };
-        set(ref(db, `categories/${uuid}`), categoryData);
+        });
+
+        // Get the generated key (UUID) from the reference
+        const uuid = newCategoryRef.key;
+
+        // Update the category with the generated UUID directly under the category key
+        if (uuid) {
+          const categoryData = {
+            uuid: uuid,
+            name: data.category,
+          };
+          set(ref(db, `categories/${uuid}`), categoryData);
+        }
+
+        form.reset();
+        toast({
+          title: "Created a category Successfully",
+          description: "Category Title: " + data.category,
+        });
+      } catch (error) {
+        form.reset();
+        toast({
+          variant: "destructive",
+          title: "Could not create category",
+          description: "Category Title: " + data.category,
+        });
       }
-  
-      form.reset();
-    } catch (error) {
-      console.error("Error updating database:", error);
-    }
+    });
   }
-  
-  
 
   return (
     <Form {...form}>
@@ -67,13 +80,19 @@ const AddCategory = () => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Add Category" {...field} />
+                <Input
+                  placeholder="Add Category"
+                  {...field}
+                  disabled={isPending}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Add</Button>
+        <Button type="submit" disabled={isPending}>
+          Add
+        </Button>
       </form>
     </Form>
   );

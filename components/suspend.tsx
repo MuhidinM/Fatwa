@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { db } from "@/app/firebase-config";
 import { ref, get, update } from "firebase/database";
 import {
@@ -13,10 +13,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "./ui/use-toast";
 
 const Suspend = ({ uuid, type }: { uuid: string; type: string }) => {
   const [status, setStatus] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -26,9 +29,15 @@ const Suspend = ({ uuid, type }: { uuid: string; type: string }) => {
         if (snapshot.exists()) {
           setStatus(snapshot.val());
         } else {
+          toast({
+            title: "No status found.",
+          });
           console.error("No status found");
         }
       } catch (error) {
+        toast({
+          title: "Error fetching status.",
+        });
         console.error("Error fetching status:", error);
       } finally {
         setLoading(false);
@@ -43,16 +52,24 @@ const Suspend = ({ uuid, type }: { uuid: string; type: string }) => {
 
     const newStatus = status === 0 ? 1 : 0;
     const updates: { [key: string]: number } = {};
-    updates[`/ustazs/${uuid}/status`] = newStatus;
+    updates[`/${type}/${uuid}/status`] = newStatus;
 
-    update(ref(db), updates)
-      .then(() => {
-        console.log("Status updated successfully.");
-        setStatus(newStatus);
-      })
-      .catch((error) => {
-        console.error("Error updating database:", error);
-      });
+    startTransition(() => {
+      update(ref(db), updates)
+        .then(() => {
+          toast({
+            title: "Status updated successfully.",
+          });
+          console.log("Status updated successfully.");
+          setStatus(newStatus);
+        })
+        .catch((error) => {
+          toast({
+            title: "Error updating database",
+          });
+          console.error("Error updating database:", error);
+        });
+    });
   };
 
   if (loading) {
@@ -63,7 +80,11 @@ const Suspend = ({ uuid, type }: { uuid: string; type: string }) => {
     <div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="link" className="text-destructive">
+          <Button
+            disabled={isPending}
+            variant="link"
+            className="text-destructive"
+          >
             {status === 0 ? "Suspend" : "Unsuspend"}
           </Button>
         </AlertDialogTrigger>
@@ -80,7 +101,7 @@ const Suspend = ({ uuid, type }: { uuid: string; type: string }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSuspend}>
+            <AlertDialogAction disabled={isPending} onClick={handleSuspend}>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
