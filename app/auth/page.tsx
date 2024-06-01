@@ -38,10 +38,10 @@ const formSchema = z.object({
 });
 
 const Page = () => {
-  const { userLoggedIn, setUserLoggedIn } = useAuth(); // Ensure setUserLoggedIn is available from context
+  const { userLoggedIn, setUserLoggedIn } = useAuth();
   const router = useRouter();
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [error, setError] = useState(null); // State to hold any errors
+  const [error, setError] = useState(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,21 +57,23 @@ const Page = () => {
   }, [userLoggedIn, router]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     if (!isSigningIn) {
       setIsSigningIn(true);
       try {
+        console.log("Attempting to sign in with:", values);
         await doSignInWithEmailAndPassword(values.email, values.password);
-        setUserLoggedIn(true); // Update userLoggedIn state on successful sign-in
-        router.push("/dashboard"); // Navigate to dashboard after successful sign-in
+        setUserLoggedIn(true);
+        console.log("Sign-in successful, userLoggedIn set to true");
       } catch (err) {
-        setError(err.message); // Capture and set the error message
+        setError(err.message);
         console.error("Error during sign-in:", err);
       } finally {
         setIsSigningIn(false);
       }
     }
   }
+
+  console.log("userLoggedIn:", userLoggedIn);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -129,8 +131,7 @@ const Page = () => {
               </Button>
             </form>
           </Form>
-          {error && <p className="text-red-500 mt-2">{error}</p>}{" "}
-          {/* Display error message */}
+          {error && <p className="text-red-500 mt-2">{error}</p>}
         </CardContent>
       </Card>
     </div>

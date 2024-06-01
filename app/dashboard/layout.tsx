@@ -1,14 +1,24 @@
 "use client";
 import { MiniSidebar } from "@/components/dashboard/mobile-sidebar";
 import { Navbar } from "@/components/dashboard/sidebar";
+import { useAuth } from "@/contexts/authContext";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   const [small, setSmall] = useState(false);
+  const { userLoggedIn, setUserLoggedIn } = useAuth(); // Ensure setUserLoggedIn is available from context
+  const router = useRouter();
   const changeSize = () => {
     setSmall(!small);
   };
+  // useEffect(() => {
+  //   if (!userLoggedIn) {
+  //     router.push("/auth");
+  //   }
+  // }, [userLoggedIn, router]);
+  console.log(userLoggedIn);
   return (
     <div className="">
       <Navbar click={changeSize} small={small} />

@@ -12,7 +12,7 @@ type AuthContextType = {
 const AuthContext = React.createContext<AuthContextType>({
   currentUser: null,
   userLoggedIn: false,
-  setUserLoggedIn: () => {}, // Provide a default no-op function
+  setUserLoggedIn: () => {}, // Default no-op function
   loading: true,
 });
 
@@ -26,20 +26,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, initializeUser);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user);
+      if (user) {
+        setCurrentUser(user);
+        setUserLoggedIn(true);
+        console.log("User is logged in, setting userLoggedIn to true");
+      } else {
+        setCurrentUser(null);
+        setUserLoggedIn(false);
+        console.log("User is not logged in, setting userLoggedIn to false");
+      }
+      setLoading(false);
+    });
     return unsubscribe;
   }, []);
-
-  async function initializeUser(user: any) {
-    if (user) {
-      setUserLoggedIn(true);
-      setCurrentUser({ ...user });
-    } else {
-      setUserLoggedIn(false);
-      setCurrentUser(null);
-    }
-    setLoading(false);
-  }
 
   const value = {
     currentUser,
