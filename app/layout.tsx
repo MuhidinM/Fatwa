@@ -1,30 +1,14 @@
 "use client";
-// import type { Metadata } from "next";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/authContext";
+import HeadMetadata from "@/components/headMetadata";
 
 const inter = Inter({ subsets: ["latin"] });
-
-// export const metadata: Metadata = {
-//   title: "Dashboard",
-//   description: "",
-//   icons: [
-//     {
-//       media: "(prefers-color-scheme:light)",
-//       url: "/favicon.ico",
-//       href: "/favicon.ico",
-//     },
-//     {
-//       media: "(prefers-color-scheme:dark)",
-//       url: "/favicon.ico",
-//       href: "/favicon.ico",
-//     },
-//   ],
-// };
 
 export default function RootLayout({
   children,

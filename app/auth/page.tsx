@@ -64,7 +64,7 @@ const Page = () => {
         await doSignInWithEmailAndPassword(values.email, values.password);
         setUserLoggedIn(true);
         console.log("Sign-in successful, userLoggedIn set to true");
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
         console.error("Error during sign-in:", err);
       } finally {
