@@ -3,12 +3,13 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,28 +24,55 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ModeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/contexts/authContext";
+import { doSignInWithEmailAndPassword } from "../auth";
 
 const formSchema = z.object({
-  phone: z.string().min(2, {
-    message: "Phone Number must be at least 9 characters.",
-  }),
-  password: z.string().min(2, {
-    message: "Username must be at least 8 characters.",
+  email: z
+    .string()
+    .email({ message: "Invalid email address" })
+    .min(2, { message: "Email is required" }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
   }),
 });
 
-const page = () => {
+const Page = () => {
+  const { userLoggedIn, setUserLoggedIn } = useAuth(); // Ensure setUserLoggedIn is available from context
+  const router = useRouter();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [error, setError] = useState(null); // State to hold any errors
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      phone: "",
+      email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  useEffect(() => {
+    if (userLoggedIn) {
+      router.push("/dashboard");
+    }
+  }, [userLoggedIn, router]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      try {
+        await doSignInWithEmailAndPassword(values.email, values.password);
+        setUserLoggedIn(true); // Update userLoggedIn state on successful sign-in
+        router.push("/dashboard"); // Navigate to dashboard after successful sign-in
+      } catch (err) {
+        setError(err.message); // Capture and set the error message
+        console.error("Error during sign-in:", err);
+      } finally {
+        setIsSigningIn(false);
+      }
+    }
   }
+
   return (
     <div className="flex justify-center items-center h-screen">
       <Card className="w-[450px]">
@@ -57,19 +85,23 @@ const page = () => {
               </div>
             </div>
           </CardTitle>
-          <CardDescription>Log in for Fetawa administrator.</CardDescription>
+          <CardDescription>LogIn to Fetawa administrator.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="phone"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="+251987654321" {...field} />
+                      <Input
+                        placeholder="test@email.com"
+                        type="email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,13 +124,17 @@ const page = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">LogIn</Button>
+              <Button type="submit" disabled={isSigningIn}>
+                Log In
+              </Button>
             </form>
           </Form>
+          {error && <p className="text-red-500 mt-2">{error}</p>}{" "}
+          {/* Display error message */}
         </CardContent>
       </Card>
     </div>
   );
 };
 
-export default page;
+export default Page;

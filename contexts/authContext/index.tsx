@@ -5,12 +5,14 @@ import React, { useState, useContext, useEffect } from "react";
 type AuthContextType = {
   currentUser: any;
   userLoggedIn: boolean;
+  setUserLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 };
 
 const AuthContext = React.createContext<AuthContextType>({
   currentUser: null,
   userLoggedIn: false,
+  setUserLoggedIn: () => {}, // Provide a default no-op function
   loading: true,
 });
 
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     currentUser,
     userLoggedIn,
+    setUserLoggedIn,
     loading,
   };
 
