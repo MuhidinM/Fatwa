@@ -13,11 +13,11 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   const changeSize = () => {
     setSmall(!small);
   };
-  // useEffect(() => {
-  //   if (!userLoggedIn) {
-  //     router.push("/auth");
-  //   }
-  // }, [userLoggedIn, router]);
+  useEffect(() => {
+    if (!userLoggedIn) {
+      router.push("/auth");
+    }
+  }, [userLoggedIn, router]);
   console.log(userLoggedIn);
   return (
     <div className="">

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
@@ -18,9 +18,11 @@ import { User } from "../user";
 import { sideBar } from "@/constants";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import { MiniSidebar } from "./mobile-sidebar";
+import { doSignOut } from "@/app/auth";
 
 export const Navbar = ({ click, small }: { click: any; small: any }) => {
   const path = usePathname();
+  const router = useRouter();
   return (
     <div>
       <div className="md:hidden flex items-center justify-between my-2 mx-4">
@@ -115,7 +117,15 @@ export const Navbar = ({ click, small }: { click: any; small: any }) => {
                     </Button>
                   </li>
                   <li>
-                    <Button variant={"destructive"} className="w-full">
+                    <Button
+                      variant={"destructive"}
+                      className="w-full"
+                      onClick={() => {
+                        doSignOut().then(() => {
+                          router.push("/auth");
+                        });
+                      }}
+                    >
                       <LogOut />
                       <span className={cn("ms-3", small && "hidden")}>
                         Log out
